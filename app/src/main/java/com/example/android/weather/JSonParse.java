@@ -51,5 +51,9 @@ public class JSONParse {
         return (double) tmp / factor;
     }
 
+    public String getCityName() throws  JSONException{
+        return jsonObject.getString("name");
+    }
+
 
 }
