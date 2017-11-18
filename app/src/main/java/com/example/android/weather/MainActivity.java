@@ -8,32 +8,28 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkError;
 import com.android.volley.NoConnectionError;
 import com.android.volley.ParseError;
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-
 import org.json.JSONException;
-import org.json.JSONObject;
+
 
 public class MainActivity extends AppCompatActivity {
     private EditText mEditText;
     private TextView mTextView;
-    private JSONParse resultOfRequest;
-    private VolleyError requestError;
-    public static final String APP_PREFERENCES = "mysettings";
+    private TextView mTextForecast;
+    public static final String APP_PREFERENCES = "WeatherSettings";
     public static final String APP_PREFERENCES_CITY = "city";
     private SharedPreferences mSettings;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,35 +37,18 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         mEditText = findViewById(R.id.inputCity);
         mTextView = findViewById(R.id.output);
+        mTextForecast = findViewById(R.id.forecast);
         mSettings = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
         if(mSettings.contains(APP_PREFERENCES_CITY)){
             RequestQueue queue = Volley.newRequestQueue(this);
-            String url = "http://api.openweathermap.org/data/2.5/weather?q=";
-            String appid = "f0fd052a5dd68c962d6cc9aa80735ed4";
-            String userInput = mSettings.getString(APP_PREFERENCES_CITY,"");
-            String urlForRequest = url + userInput + "&appid=" + appid;
-            Log.i("REQUESTURL",urlForRequest);
-            JsonObjectRequest jsObjRequest = new JsonObjectRequest
-                    (Request.Method.GET, urlForRequest, null, new Response.Listener<JSONObject>() {
-                        @Override
-                        public void onResponse(JSONObject response) {
-                            resultOfRequest = new JSONParse(response);
-                            UpdateField();
-                        }
-                    }, new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            requestError = error;
-                            OnErrorUpdate();
-                        }
-                    });
-            queue.add(jsObjRequest);
+            String cityName = mSettings.getString(APP_PREFERENCES_CITY,"");
+            JRequest jsObjRequest = new JRequest(cityName,this);
+            queue.add(jsObjRequest.getRequest());
         }
         else
             Log.i("First Run", "APP_PREFERENCES_CITY not exist");
@@ -77,51 +56,34 @@ public class MainActivity extends AppCompatActivity {
 
     public void onPressSearch(View view) {
         RequestQueue queue = Volley.newRequestQueue(this);
-        String url = "http://api.openweathermap.org/data/2.5/weather?q=";
-        String appid = "f0fd052a5dd68c962d6cc9aa80735ed4";
-        String userInput = mEditText.getText().toString();
-        if (userInput != null && userInput.length() > 2) {
+        String cityName = mEditText.getText().toString();
+        if (cityName != null && cityName.length() > 2) {
             SharedPreferences.Editor editor = mSettings.edit();
-            editor.putString(APP_PREFERENCES_CITY,userInput);
+            editor.putString(APP_PREFERENCES_CITY,cityName);
             editor.apply();
-            String urlForRequest = url + userInput + "&appid=" + appid;
-            JsonObjectRequest jsObjRequest = new JsonObjectRequest
-                    (Request.Method.GET, urlForRequest, null, new Response.Listener<JSONObject>() {
-                        @Override
-                        public void onResponse(JSONObject response) {
-                            resultOfRequest = new JSONParse(response);
-                            UpdateField();
-                        }
-                    }, new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            requestError = error;
-                            OnErrorUpdate();
-                        }
-                    });
-            queue.add(jsObjRequest);
+            JRequest jsObjRequest = new JRequest(cityName,this);
+            JRequest forecastRequest = new JRequest(cityName,this, true);
+            queue.add(jsObjRequest.getRequest());
+            queue.add(forecastRequest.getRequest());
         }
-
-
     }
-    private void OnErrorUpdate(){
 
+    public void OnErrorUpdate(VolleyError requestError){
             if (requestError instanceof TimeoutError || requestError instanceof NoConnectionError) {
                 Log.i("ERRORREQUEST", "TimeoutError");
             } else if (requestError instanceof AuthFailureError) {
                 Log.i("ERRORREQUEST", "AuthFailureError");
             } else if (requestError instanceof ServerError) {
+                mTextView.setText("Invalid city name");
                 Log.i("ERRORREQUEST", "ServerError");
             } else if (requestError instanceof NetworkError) {
                 Log.i("ERRORREQUEST", "NetworkError");
             } else if (requestError instanceof ParseError) {
                 Log.i("ERRORREQUEST", "ParseError");
             }
-
     }
 
-    private void UpdateField(){
-
+    public void UpdateField(JSONParse resultOfRequest){
             StringBuilder builder = new StringBuilder();
             try {
                 builder.append("City: " + resultOfRequest.getCityName() + "\n");
@@ -134,7 +96,17 @@ public class MainActivity extends AppCompatActivity {
             } catch (JSONException e) {
                 mTextView.setText(e.getMessage());
             }
+    }
 
-
+    public void UpdateField(JSONParseForecast resultOfRequest){
+        StringBuilder builder = new StringBuilder();
+        try {
+            builder.append("City: " + resultOfRequest.getCityName() + "\n");
+            builder.append("ID: " + resultOfRequest.getCityID() + "\n");
+            builder.append("Temps:" + resultOfRequest.getTemps());
+            mTextForecast.setText(builder.toString());
+        } catch (JSONException e) {
+            mTextForecast.setText(e.getMessage());
+        }
     }
 }
