@@ -8,31 +8,24 @@ import org.json.JSONObject;
  * Created by Yurko on 18.11.2017.
  */
 
-public class JSONParseForecast {
-    private String jsonString;
-    private JSONObject jsonObject;
-
-    public JSONParseForecast(String JSONString) throws JSONException {
-        this.jsonString = JSONString;
-        jsonObject = new JSONObject(jsonString);
-    }
+public class JSONParseForecast extends JSONParse{
 
     public JSONParseForecast(JSONObject jsonObject) {
-        this.jsonObject = jsonObject;
+        super(jsonObject);
     }
 
     public String getCityName() throws  JSONException{
-        return jsonObject.getJSONObject("city").getString("name");
+        return mJsonObj.getJSONObject("city").getString("name");
     }
 
     public String getCityID() throws  JSONException{
-        return jsonObject.getJSONObject("city").getString("id");
+        return mJsonObj.getJSONObject("city").getString("id");
     }
 
     public String getTemps() throws JSONException{
         StringBuilder builder = new StringBuilder();
         double temp;
-        JSONArray array = jsonObject.getJSONArray("list");
+        JSONArray array = mJsonObj.getJSONArray("list");
         for(int i = 0; i<array.length();i++){
             temp = array.getJSONObject(i).getJSONObject("main").getDouble("temp")-273;
              builder.append(round(temp,0)+"\n");
