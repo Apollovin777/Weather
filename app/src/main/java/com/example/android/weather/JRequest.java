@@ -36,9 +36,11 @@ public class JRequest {
             @Override
             public void onResponse(JSONObject response) {
                 if (forecast) {
-                    //activity.UpdateField(new JSONParseForecast(response));
+                    activity.setForecast(new JSONParseForecast(response));
+                    activity.UpdateForecast();
                 } else {
-                    activity.UpdateField(new JSONParseCurrent(response));
+                    activity.setCurrent(new JSONParseCurrent(response));
+                    activity.UpdateCurrent();
                 }
             }
         };

@@ -9,18 +9,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
-
-import com.android.volley.AuthFailureError;
-import com.android.volley.NetworkError;
-import com.android.volley.NoConnectionError;
-import com.android.volley.ParseError;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.ServerError;
-import com.android.volley.TimeoutError;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.Volley;
-import org.json.JSONException;
+
 
 
 public class MainActivity extends AppCompatActivity {
@@ -49,26 +39,23 @@ public class MainActivity extends AppCompatActivity {
             RequestQueue queue = SingletonRequestQueue.getInstance(this.getApplicationContext()).
                     getRequestQueue();
             String cityName = mSettings.getString(APP_PREFERENCES_CITY,"");
-            JRequest jsObjRequest = new JRequest(cityName,this,false);
-            queue.add(jsObjRequest.getRequest());
+            
         }
         else
             Log.i("First Run", "APP_PREFERENCES_CITY not exist");
     }
 
     public void onPressSearch(View view) {
-        RequestQueue queue = SingletonRequestQueue.getInstance(this.getApplicationContext()).
-                getRequestQueue();
+
         String cityName = mEditText.getText().toString();
-        if (cityName != null && cityName.length() > 2) {
+        if (cityName.length() > 2) {
             SharedPreferences.Editor editor = mSettings.edit();
             editor.putString(APP_PREFERENCES_CITY,cityName);
             editor.apply();
-            JRequest jsObjRequest = new JRequest(cityName,this,false);
-            JRequest forecastRequest = new JRequest(cityName,this, true);
-            queue.add(jsObjRequest.getRequest());
-            queue.add(forecastRequest.getRequest());
+
+
             Intent intent = new Intent(MainActivity.this, WeatherActivity.class);
+            intent.putExtra("cityName", cityName);
             startActivity(intent);
         }
     }

@@ -1,7 +1,10 @@
 package com.example.android.weather;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.Date;
 
 public class JSONParseCurrent extends JSONParse{
 
@@ -34,5 +37,19 @@ public class JSONParseCurrent extends JSONParse{
 
     public String getCityName() throws  JSONException{
         return mJsonObj.getString("name");
+    }
+
+    public Date getDate() throws JSONException{
+        return JSONParse.convertUnix(mJsonObj.getLong("dt"));
+    }
+
+    public String getDesc() throws JSONException{
+        JSONArray array = mJsonObj.getJSONArray("weather");
+        StringBuilder builder = new StringBuilder();
+        for(int i = 0; i<array.length();i++){
+                builder.append(array.getJSONObject(i).getString("description"));
+                builder.append(" ");
+        }
+        return builder.toString();
     }
 }

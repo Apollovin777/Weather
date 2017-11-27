@@ -2,6 +2,8 @@ package com.example.android.weather;
 
 import org.json.JSONObject;
 
+import java.util.Date;
+
 public class JSONParse {
     protected JSONObject mJsonObj;
 
@@ -16,5 +18,11 @@ public class JSONParse {
         long tmp = Math.round(value);
         return (double) tmp / factor;
     }
+
+    public static Date convertUnix(long timeStamp){
+        Date time =new Date(timeStamp*1000);
+        return time;
+    }
+
 
 }
