@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
             RequestQueue queue = SingletonRequestQueue.getInstance(this.getApplicationContext()).
                     getRequestQueue();
             String cityName = mSettings.getString(APP_PREFERENCES_CITY,"");
-            
+
         }
         else
             Log.i("First Run", "APP_PREFERENCES_CITY not exist");
