@@ -16,6 +16,7 @@ import org.json.JSONObject;
 
 public class JRequest {
     private final String APPID = "f0fd052a5dd68c962d6cc9aa80735ed4";
+
     String urlBaseCurrent = "http://api.openweathermap.org/data/2.5/weather?appid=" + APPID + "&q=";
     String urlBaseForecast = "http://api.openweathermap.org/data/2.5/forecast?appid=" + APPID + "&q=";
     private JsonObjectRequest mRequest;

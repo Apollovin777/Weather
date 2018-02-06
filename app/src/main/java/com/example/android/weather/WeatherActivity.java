@@ -53,8 +53,9 @@ public class WeatherActivity extends Activity {
 
         JRequest jsObjRequest = new JRequest(cityName,this,false);
         queue.add(jsObjRequest.getRequest());
-        JRequest forecastRequest = new JRequest(cityName,this, true);
-        queue.add(forecastRequest.getRequest());
+
+       // RequestCurrentWeather request = new RequestCurrentWeather("Vinnytsya");
+
     }
 
     public void UpdateCurrent(){
