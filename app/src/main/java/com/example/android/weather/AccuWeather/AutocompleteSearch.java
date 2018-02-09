@@ -53,5 +53,4 @@ public class AutocompleteSearch {
         private String ID;
         private String localizedName;
     }
-
 }
