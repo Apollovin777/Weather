@@ -8,20 +8,23 @@
     tools:context="com.example.android.weather.MainActivity">
 
 
-    <EditText
-        android:id="@+id/searchEdit"
+    <AutoCompleteTextView
+        android:id="@+id/autoCompleteTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"/>
+        android:hint="Enter city name"
+        android:gravity="center"
+        app:layout_constraintTop_toTopOf="parent"     />
 
     <Button
         android:id="@+id/searchButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Search"
-        app:layout_constraintTop_toBottomOf="@+id/searchEdit"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"/>
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/autoCompleteTextView"
+        tools:layout_editor_absoluteY="46dp" />
     <RelativeLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"

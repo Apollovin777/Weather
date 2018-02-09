@@ -1,40 +1,33 @@
 package com.example.android.weather;
 
 import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.android.volley.NetworkResponse;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.HttpHeaderParser;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
-
-import org.json.JSONObject;
-
-import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import com.example.android.weather.AccuWeather.*;
 
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
     private static final String TAG = "MainActivity";
 
-    private EditText mEditText;
+    private AutoCompleteTextView mEditText;
     private Button mButton;
     private CurrentWeather mCurrentWeather;
     private ImageView mImageView;
@@ -45,9 +38,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TextView mWindSpeed;
     private TextView mWindDegree;
     private TextView mPress;
-
-
-
+    private ArrayAdapter<String> mAutoCompleteAdapter;
+    private List<String> mListSuggestions;
 
 
     @Override
@@ -55,7 +47,34 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mEditText = findViewById(R.id.searchEdit);
+        mListSuggestions = new ArrayList<>();
+
+        mAutoCompleteAdapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_dropdown_item_1line, mListSuggestions);
+
+        mEditText = findViewById(R.id.autoCompleteTextView);
+        mEditText.setDropDownBackgroundResource(R.color.colorPrimaryDark);
+        mEditText.setThreshold(2);
+        mEditText.setAdapter(mAutoCompleteAdapter);
+        mEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.length()>2){
+                    AutoCompleteTask task = new AutoCompleteTask();
+                    //task.execute(s.toString());
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
 
         mButton = findViewById(R.id.searchButton);
         mButton.setOnClickListener(this);
@@ -72,6 +91,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mWindSpeed = findViewById(R.id.windSpeed);
         mWindDegree = findViewById(R.id.windDeg);
     }
+
+
 
     private void clearFields(){
         mCityText.setText("");
@@ -128,6 +149,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             mImageView.setImageBitmap(BitmapFactory.decodeByteArray(
                     currentWeather.mIconData,0,currentWeather.mIconData.length));
+        }
+    }
+
+    private class AutoCompleteTask extends AsyncTask<String,Void,List<AutocompleteSearch>>{
+
+
+        @Override
+        protected List<AutocompleteSearch> doInBackground(String... strings) {
+            return AutoCompleteSearchRequest.getAutoCompleteList(strings[0]);
+        }
+
+        @Override
+        protected void onPostExecute(List<AutocompleteSearch> autoCompleteSearch) {
+            super.onPostExecute(autoCompleteSearch);
+
+            mListSuggestions.clear();
+            if (autoCompleteSearch != null) {
+                for (int i = 0; i < autoCompleteSearch.size(); i++) {
+                    mListSuggestions.add(autoCompleteSearch.get(i).mLocalizedName);
+                }
+                if (mListSuggestions.size() > 0) {
+                    mAutoCompleteAdapter = new ArrayAdapter<String>(getApplicationContext(),
+                            android.R.layout.simple_list_item_single_choice, mListSuggestions);
+                    mAutoCompleteAdapter.notifyDataSetChanged();
+                    mEditText.setAdapter(mAutoCompleteAdapter);
+                }
+            }
         }
     }
 
