@@ -20,6 +20,9 @@ public class CurrentConditions {
     private Visibility mVisibility;
     private String mObstructionsToVisibility;
     private int mCloudCover;
+    private Ceiling mCeiling;
+    private Pressure mPressure;
+    private PressureTendency mPressureTendency;
     private Temperature mPast24HourTemperatureDeparture;
     private Temperature mApparentTemperature;
     private Temperature WindChillTemperature;
@@ -209,6 +212,30 @@ public class CurrentConditions {
 
     public void setPrecipitationSummary(Precipitation precipitationSummary) {
         mPrecipitationSummary = precipitationSummary;
+    }
+
+    public Ceiling getmCeiling() {
+        return mCeiling;
+    }
+
+    public void setmCeiling(Ceiling mCeiling) {
+        this.mCeiling = mCeiling;
+    }
+
+    public Pressure getmPressure() {
+        return mPressure;
+    }
+
+    public void setmPressure(Pressure mPressure) {
+        this.mPressure = mPressure;
+    }
+
+    public PressureTendency getmPressureTendency() {
+        return mPressureTendency;
+    }
+
+    public void setmPressureTendency(PressureTendency mPressureTendency) {
+        this.mPressureTendency = mPressureTendency;
     }
 
     public static class Wind{

@@ -40,12 +40,36 @@ public class CurrentConditionsParser {
 
             conditions.setUVIndex(getInt("UVIndex",jObj));
             conditions.setUVIndexText(getString("UVIndexText",jObj));
+            JSONObject jVisibility = jObj.getJSONObject("Visibility");
+            CurrentConditions.Visibility visibility =
+                    new CurrentConditions.Visibility();
+            visibility.setMetric(parseUnits(jVisibility.getJSONObject("Metric")));
+            visibility.setImperial(parseUnits(jVisibility.getJSONObject("Imperial")));
+            conditions.setVisibility(visibility);
 
+            conditions.setObstructionsToVisibility(getString("ObstructionsToVisibility",jObj));
+            conditions.setCloudCover(getInt("CloudCover",jObj));
 
+            JSONObject jCeiling = jObj.getJSONObject("Ceiling");
+            CurrentConditions.Ceiling ceiling =
+                    new CurrentConditions.Ceiling();
+            ceiling.setMetric(parseUnits(jCeiling.getJSONObject("Metric")));
+            ceiling.setImperial(parseUnits(jCeiling.getJSONObject("Imperial")));
+            conditions.setmCeiling(ceiling);
 
+            JSONObject jPressure = jObj.getJSONObject("Pressure");
+            CurrentConditions.Pressure pressure =
+                    new CurrentConditions.Pressure();
+            pressure.setMetric(parseUnits(jPressure.getJSONObject("Metric")));
+            pressure.setImperial(parseUnits(jPressure.getJSONObject("Imperial")));
+            conditions.setmPressure(pressure);
 
-
-
+            JSONObject jPressureTendency = jObj.getJSONObject("PressureTendency");
+            CurrentConditions.PressureTendency pressureTendency =
+                    new CurrentConditions.PressureTendency();
+            pressureTendency.setLocalizedText(getString("LocalizedText",jPressureTendency));
+            pressureTendency.setCode(getString("Code",jPressureTendency));
+            conditions.setmPressureTendency(pressureTendency);
         }
         catch (JSONException e){
             return null;
