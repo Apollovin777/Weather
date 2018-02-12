@@ -13,15 +13,15 @@ import java.util.List;
 
 public class AutoCompleteSearchParser {
 
-    public static List<AutocompleteSearch> parse(String data){
-        List<AutocompleteSearch> list = new ArrayList<>();
+    public static List<AutoCompleteSearch> parse(String data){
+        List<AutoCompleteSearch> list = new ArrayList<>();
 
         try {
             JSONArray jArray = new JSONArray(data);
             for (int i = 0; i < jArray.length(); i++) {
                 JSONObject jsonObject = jArray.getJSONObject(i);
 
-                AutocompleteSearch acSearch = new AutocompleteSearch();
+                AutoCompleteSearch acSearch = new AutoCompleteSearch();
                 acSearch.mVersion = jsonObject.getInt("Version");
                 acSearch.mKey = jsonObject.getString("Key");
                 acSearch.mType = jsonObject.getString("Type");

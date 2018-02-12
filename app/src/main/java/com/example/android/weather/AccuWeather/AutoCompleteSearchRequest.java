@@ -1,24 +1,13 @@
 package com.example.android.weather.AccuWeather;
 
-import android.app.Application;
-import android.content.Context;
-import android.content.res.Resources;
 import android.net.Uri;
 import android.util.Log;
 
-import com.android.volley.Response;
-import com.example.android.weather.R;
-
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
-
-/**
- * Created by UBanit on 2/7/2018.
- */
 
 public class AutoCompleteSearchRequest {
     private static final String TAG = "SEARCHREQUEST_AUTO";
@@ -38,7 +27,7 @@ public class AutoCompleteSearchRequest {
             .appendQueryParameter(LANGUAGE,"en-us")
             .build();
 
-    public static List<AutocompleteSearch> getAutoCompleteList(String s) {
+    public static List<AutoCompleteSearch> getAutoCompleteList(String s) {
 
         String inputLine;
         try {

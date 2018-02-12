@@ -1,6 +1,6 @@
 package com.example.android.weather.AccuWeather;
 
-public class AutocompleteSearch {
+public class AutoCompleteSearch {
 
     public int mVersion;
     public String mKey;

@@ -1,5 +1,6 @@
 package com.example.android.weather;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -14,7 +15,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.android.weather.AccuWeather.AutoCompleteSearchRequest;
-import com.example.android.weather.AccuWeather.AutocompleteSearch;
+import com.example.android.weather.AccuWeather.AutoCompleteSearch;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +25,7 @@ public class SearchFragment extends Fragment {
     private AutoCompleteTextView mEditText;
     private Button mButton;
     private RecyclerView mRecyclerView;
-    private List<AutocompleteSearch> mList = new ArrayList<>();
+    private List<AutoCompleteSearch> mList = new ArrayList<>();
     private SearchAdapter mAdapter;
 
     public static SearchFragment newInstance(){
@@ -51,7 +52,7 @@ public class SearchFragment extends Fragment {
         return view;
     }
 
-    private class SearchHolder extends RecyclerView.ViewHolder{
+    private class SearchHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private TextView mCityTextView;
         private TextView mLocationTextView;
 
@@ -59,14 +60,23 @@ public class SearchFragment extends Fragment {
             super(inflater.inflate(R.layout.list_search_city,group,false));
             mCityTextView = itemView.findViewById(R.id.city_name);
             mLocationTextView = itemView.findViewById(R.id.city_location);
+            itemView.setOnClickListener(this);
         }
 
+        @Override
+        public void onClick(View v) {
+            int position = this.getAdapterPosition();
+            WeatherPreferences prefs = new WeatherPreferences(getActivity());
+            prefs.addValue(mList.get(position).mKey);
+            Intent i = CurrentWeatherPagerActivity.newIntent(getActivity(),mList.get(position).mKey);
+            startActivity(i);
+        }
     }
 
     private class SearchAdapter extends RecyclerView.Adapter<SearchHolder>{
-        private List<AutocompleteSearch> mCities;
+        private List<AutoCompleteSearch> mCities;
 
-        public SearchAdapter(List<AutocompleteSearch> cities) {
+        public SearchAdapter(List<AutoCompleteSearch> cities) {
             mCities = cities;
         }
 
@@ -89,21 +99,21 @@ public class SearchFragment extends Fragment {
             return mList.size();
         }
 
-        public void setCities(List<AutocompleteSearch> list) {
+        public void setCities(List<AutoCompleteSearch> list) {
             mCities = list;
         }
     }
 
-    private class AutoCompleteTask extends AsyncTask<String,Void,List<AutocompleteSearch>> {
+    private class AutoCompleteTask extends AsyncTask<String,Void,List<AutoCompleteSearch>> {
 
 
         @Override
-        protected List<AutocompleteSearch> doInBackground(String... strings) {
+        protected List<AutoCompleteSearch> doInBackground(String... strings) {
             return AutoCompleteSearchRequest.getAutoCompleteList(strings[0]);
         }
 
         @Override
-        protected void onPostExecute(List<AutocompleteSearch> autoCompleteSearch) {
+        protected void onPostExecute(List<AutoCompleteSearch> autoCompleteSearch) {
             super.onPostExecute(autoCompleteSearch);
 
             mList.clear();
@@ -121,9 +131,6 @@ public class SearchFragment extends Fragment {
                         mAdapter.setCities(mList);
                         mAdapter.notifyDataSetChanged();
                     }
-
-                    //mAdapter.notifyDataSetChanged();
-
                 }
             }
         }
